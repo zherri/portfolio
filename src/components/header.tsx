@@ -52,7 +52,7 @@ export default function Header() {
   ];
 
   return (
-    <div className="flex py-8 bg-neutral-900/50 rounded-b-[100%] justify-center gap-28">
+    <div className="sticky top-0 z-50 flex py-8 bg-neutral-900/95 rounded-b-[100%] justify-center gap-28">
       <div
         className={`${jetBrainsMonoBold.className} font-sans
                     bg-linear-to-r from-red-700 via-red-800 to-red-700 inline-block text-transparent bg-clip-text text-3xl

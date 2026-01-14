@@ -1,35 +1,75 @@
+"use client";
+
 import { Terminal } from "@/components/terminal";
 import IconTypografy from "@/components/icon_typografy";
-import { FaInfoCircle } from "react-icons/fa";
+import { FaInfoCircle, FaAngleUp } from "react-icons/fa";
+import { useState, useEffect, useRef } from "react";
 
 export default function Home() {
+  const [showHelp, setShowHelp] = useState<boolean>(true);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const startTimer = () => {
+    stopTimer();
+    timeoutRef.current = setTimeout(() => setShowHelp(false), 10000);
+  };
+
+  const stopTimer = () => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+  };
+
+  useEffect(() => {
+    startTimer();
+    return () => stopTimer();
+  }, []);
+
   return (
-    <>
-      <div className="flex flex-col w-full h-full py-4 px-20 gap-2">
-        <Terminal />
-        <div className="w-full p-4 border border-red-700 shadow-lg shadow-red-700/50 bg-neutral-900/50 rounded-3xl">
-          <IconTypografy icon={FaInfoCircle} iconColor="red">
-            <span>
-              This is a{" "}
-              <strong className="text-red-600">interactive terminal</strong> for
-              show my about. You can test it{" "}
-              <strong className="text-red-600">writing the commands</strong>{" "}
-              below:
-            </span>
-            <br />
-            <span>
-              - <strong className="text-red-600">ls</strong>: Show directories
-              and files of the current folder.
-            </span>
-            <br />
-            <span>
-              - <strong className="text-red-600">cat</strong> [
-              <strong className="text-red-600">FILE</strong>]: Show content
-              inside a given file.
-            </span>
-          </IconTypografy>
-        </div>
+    <div className="flex flex-col items-center w-full h-full">
+      <Terminal />
+      <div
+        className={`absolute bottom-0 ${showHelp ? "opacity-0" : "opacity-100"} transition-transform animate-bounce transform 
+                    flex flex-col items-center justify-center`}
+      >
+        <FaAngleUp size={42} color="green" />
       </div>
-    </>
+      <div
+        onMouseEnter={() => {
+          stopTimer();
+          setShowHelp(true);
+        }}
+        onMouseLeave={() => startTimer()}
+        className={`absolute w-[90%] p-4 border border-green-700 shadow-lg shadow-green-800/50 bg-neutral-950/20 rounded-2xl
+                    ${showHelp ? "opacity-100 bottom-8" : "opacity-0 bottom-0"} transition-all duration-200`}
+      >
+        <IconTypografy icon={FaInfoCircle} iconColor="green">
+          <span>
+            This is a{" "}
+            <strong className="text-green-500">interactive terminal</strong> for
+            show my <strong className="text-green-500">portfolio</strong> in a
+            different way. You can test it{" "}
+            <strong className="text-green-500">writing the commands</strong>{" "}
+            below:
+          </span>
+          <br />
+          <span>
+            - <strong className="text-green-500">ls</strong>: Show directories
+            and files of the current folder.
+          </span>
+          <br />
+          <span>
+            - <strong className="text-green-500">cat</strong> [
+            <strong className="text-green-500">FILENAME</strong>]: Show content
+            inside a given file, except for binaries in this experience, of
+            course.
+          </span>
+          <br />
+          <span>
+            - <strong className="text-green-500">./</strong>[
+            <strong className="text-green-500">BIN FILENAME</strong>]: Pattern
+            to execute binary file.
+          </span>
+        </IconTypografy>
+      </div>
+    </div>
   );
 }

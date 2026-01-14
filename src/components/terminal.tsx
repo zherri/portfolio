@@ -4,57 +4,86 @@ import { JSX, useEffect, useState } from "react";
 
 export function Terminal() {
   const [history, setHistory] = useState<JSX.Element[]>([]);
-  const [args, setArgs] = useState<string>("");
+  const [cmd, setCmd] = useState<string>("");
+  const [cwd, setCwd] = useState<string>("myportfolio");
+
+  const acceptCmds = ["cd", "ls", "cat"];
+  const fileSystem: { [key: string]: string[] } = {
+    myportfolio: ["󰡯 about.bin", " stacks", " projects", " experience"],
+    stacks: [],
+    projects: [],
+    experience: [],
+  };
 
   useEffect(() => {
     const takeKey = (event: KeyboardEvent) => {
+      const args = cmd.includes(" ") ? cmd.split(" ") : [cmd];
+      var print = "";
+
       if (event.key === "Enter") {
-        if (args === "clear") {
-          setHistory([]);
-          setArgs("");
-          return;
+        switch (args[0]) {
+          case "cd":
+            if (!(1 in args)) {
+              setCwd("myportfolio");
+              break;
+            }
+            break;
+
+          case "ls":
+            print = fileSystem[cwd].join("  ");
+            break;
+
+          case "clear":
+            setHistory([]);
+            setCmd("");
+            return;
         }
+
         const newEntry = (
           <div key={Date.now()}>
             <div className="mb-1">
-              <strong className="text-[#1FCA00]">-&gt;&nbsp;</strong>
-              <strong className="text-[#15CCCC]">myinfo&nbsp;</strong>
-              <span>{args}</span>
+              <strong className="text-green-500">
+                [zherri@archlinux {cwd}]$&nbsp;
+              </strong>
+              <span>{cmd}</span>
             </div>
-            <span>{args === "ls" ? "" : "invalid command: " + args}</span>
+            <span>
+              {acceptCmds.includes(cmd) ? print : "invalid command: " + args[0]}
+            </span>
           </div>
         );
 
         setHistory((prev) => [...prev, newEntry]);
-        setArgs("");
+        setCmd("");
         return;
       }
 
       if (event.key === "Backspace") {
-        setArgs((prev) => prev.slice(0, -1));
+        setCmd((prev) => prev.slice(0, -1));
         return;
       }
 
       if (event.key.length === 1) {
         event.preventDefault();
-        setArgs((prev) => prev + event.key);
+        setCmd((prev) => prev + event.key);
       }
     };
 
     window.addEventListener("keydown", takeKey);
     return () => window.removeEventListener("keydown", takeKey);
-  }, [args]);
+  }, [cmd]);
 
   return (
     <>
-      <div className="max-w-full w-full h-3/4 p-4 bg-neutral-900/50 rounded-3xl wrap-break-word">
+      <div className="max-w-full w-full h-full p-4 bg-black rounded-3xl wrap-break-word">
         {history}
         <div className="flex flex-wrap break-all">
-          <strong className="text-[#1FCA00]">-&gt;&nbsp;</strong>
-          <strong className="text-[#15CCCC]">myinfo&nbsp;</strong>
+          <strong className="text-green-500">
+            [zherri@archlinux {cwd}]$&nbsp;
+          </strong>
           <span>
-            {args}
-            <strong className="blink-cursor">│</strong>
+            {cmd}
+            <strong className="text-green-500 blink-cursor">│</strong>
           </span>
         </div>
       </div>
