@@ -1,11 +1,13 @@
+import { ReactNode } from "react";
 import { IconType } from "react-icons";
 
 interface IconTypografyProps {
   hoverBgColor?: string;
   icon: IconType;
   iconColor?: string;
-  text: string;
+  text?: string;
   textColor?: string;
+  children?: ReactNode;
 }
 
 export default function IconTypografy({
@@ -14,10 +16,10 @@ export default function IconTypografy({
 }: IconTypografyProps) {
   return (
     <div
-      className={`flex items-center gap-2 ${props.hoverBgColor} p-1 rounded-md`}
+      className={`flex items-center gap-4 ${props.hoverBgColor} p-1 rounded-md`}
     >
       <Icon size={16} color={props.iconColor} />
-      <span>{props.text}</span>
+      <span>{props.text ? props.text : props.children}</span>
     </div>
   );
 }

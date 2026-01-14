@@ -14,6 +14,8 @@ interface DropdownMenuProps {
 }
 
 export function DropdownMenu(props: DropdownMenuProps) {
+  if (!props.isOpen) return null;
+
   return (
     <div
       className={`absolute ${props.isOpen ? "opacity-100" : "opacity-0"} transition-all
