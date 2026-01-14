@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { jetBrainsMono } from "@/theme/style_guide";
 import Header from "@/components/header";
 
 export const metadata: Metadata = {
@@ -13,7 +14,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="px-4" suppressHydrationWarning>
+      <body
+        className={`${jetBrainsMono.className} font-sans`}
+        suppressHydrationWarning
+      >
         <Header />
         {children}
       </body>

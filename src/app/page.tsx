@@ -1,8 +1,8 @@
 export default function Home() {
   return (
     <>
-      <div className="w-screen h-screen">
-        <span>Pica dura</span>
+      <div className="w-full h-full py-4 px-20">
+        <span>Hello, World!</span>
       </div>
     </>
   );
