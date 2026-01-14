@@ -16,7 +16,8 @@ interface DropdownMenuProps {
 export function DropdownMenu(props: DropdownMenuProps) {
   return (
     <div
-      className={`absolute ${props.isOpen ? "opacity-100" : "opacity-0"} transition-all`}
+      className={`absolute ${props.isOpen ? "opacity-100" : "opacity-0"} transition-all
+                  bg-neutral-800 border-2 border-red-700 shadow-lg shadow-red-700/40 rounded-md p-2`}
     >
       {props.children}
     </div>
