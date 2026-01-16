@@ -1,18 +1,28 @@
 "use client";
 
-import { JSX, useEffect, useState } from "react";
+import { JSX, useEffect, useRef, useState } from "react";
+import { Shell } from "@/core/shell";
+
+enum Keys {
+  Enter = "Enter",
+  Backspace = "Backspace",
+  Ctrl = "Ctrl",
+}
 
 export function Terminal() {
+  const shell = new Shell();
+
   const [history, setHistory] = useState<JSX.Element[]>([]);
   const [cmd, setCmd] = useState<string>("");
   const [cwd, setCwd] = useState<string>("myportfolio");
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   const acceptCmds = ["cd", "ls", "cat"];
-  const fileSystem: { [key: string]: string[] } = {
-    myportfolio: ["󰡯 about.bin", " stacks", " projects", " experience"],
-    stacks: [],
-    projects: [],
-    experience: [],
+
+  const scrollToBottom = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
   };
 
   useEffect(() => {
@@ -20,35 +30,21 @@ export function Terminal() {
       const args = cmd.includes(" ") ? cmd.split(" ") : [cmd];
       var print = "";
 
-      if (event.key === "Enter") {
-        switch (args[0]) {
-          case "cd":
-            if (!(1 in args)) {
-              setCwd("myportfolio");
-              break;
-            }
-            break;
-
-          case "ls":
-            print = fileSystem[cwd].join("  ");
-            break;
-
-          case "clear":
-            setHistory([]);
-            setCmd("");
-            return;
-        }
-
+      if (event.key === Keys.Enter) {
         const newEntry = (
           <div key={Date.now()}>
             <div className="mb-1">
               <strong className="text-green-500">
                 [zherri@archlinux {cwd}]$&nbsp;
               </strong>
-              <span>{cmd}</span>
+              <span>
+                <strong>{cmd}</strong>
+              </span>
             </div>
             <span>
-              {acceptCmds.includes(cmd) ? print : "invalid command: " + args[0]}
+              {acceptCmds.includes(args[0])
+                ? print
+                : "invalid command: " + args[0]}
             </span>
           </div>
         );
@@ -58,7 +54,7 @@ export function Terminal() {
         return;
       }
 
-      if (event.key === "Backspace") {
+      if (event.key === Keys.Backspace) {
         setCmd((prev) => prev.slice(0, -1));
         return;
       }
@@ -73,17 +69,24 @@ export function Terminal() {
     return () => window.removeEventListener("keydown", takeKey);
   }, [cmd]);
 
+  useEffect(() => {
+    scrollToBottom();
+  }, [history]);
+
   return (
     <>
-      <div className="max-w-full w-full h-full p-4 bg-black rounded-3xl wrap-break-word">
+      <div
+        ref={scrollRef}
+        className="max-w-full max-h-full w-full h-full p-4 overflow-y-auto bg-black wrap-break-word"
+      >
         {history}
         <div className="flex flex-wrap break-all">
           <strong className="text-green-500">
             [zherri@archlinux {cwd}]$&nbsp;
           </strong>
           <span>
-            {cmd}
-            <strong className="text-green-500 blink-cursor">│</strong>
+            <strong>{cmd}</strong>
+            <strong className="blink-cursor">│</strong>
           </span>
         </div>
       </div>

@@ -28,7 +28,7 @@ export default function Home() {
       <Terminal />
       <div
         className={`absolute bottom-0 ${showHelp ? "opacity-0" : "opacity-100"} transition-transform animate-bounce transform 
-                    flex flex-col items-center justify-center`}
+                    flex flex-col items-center justify-center z-50`}
       >
         <FaAngleUp size={42} color="green" />
       </div>
@@ -38,7 +38,7 @@ export default function Home() {
           setShowHelp(true);
         }}
         onMouseLeave={() => startTimer()}
-        className={`absolute w-[90%] p-4 border border-green-700 shadow-lg shadow-green-800/50 bg-neutral-950/20 rounded-2xl
+        className={`absolute w-[90%] p-4 border border-green-700 shadow-lg shadow-green-800/50 bg-black rounded-2xl
                     ${showHelp ? "opacity-100 bottom-8" : "opacity-0 bottom-0"} transition-all duration-200`}
       >
         <IconTypografy icon={FaInfoCircle} iconColor="green">

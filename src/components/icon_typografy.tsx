@@ -2,8 +2,8 @@ import { ReactNode } from "react";
 import { IconType } from "react-icons";
 
 interface IconTypografyProps {
-  hoverBgColor?: string;
-  icon: IconType;
+  icon?: IconType;
+  utfIcon?: string;
   iconColor?: string;
   text?: string;
   textColor?: string;
@@ -15,11 +15,15 @@ export default function IconTypografy({
   ...props
 }: IconTypografyProps) {
   return (
-    <div
-      className={`flex items-center gap-4 ${props.hoverBgColor} p-1 rounded-md`}
-    >
-      <Icon size={16} color={props.iconColor} />
-      <span>{props.text ? props.text : props.children}</span>
+    <div className={`flex items-center gap-4 p-1 rounded-md`}>
+      {Icon ? (
+        <Icon size={16} color={props.iconColor} />
+      ) : (
+        <span className={props.textColor}>{props.utfIcon}</span>
+      )}
+      <span className={props.textColor}>
+        {props.text ? props.text : props.children}
+      </span>
     </div>
   );
 }
