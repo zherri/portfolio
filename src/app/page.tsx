@@ -44,9 +44,11 @@ export default function Home() {
         <IconTypografy icon={FaInfoCircle} iconColor="green">
           <span>
             This is a{" "}
-            <strong className="text-green-500">interactive terminal</strong> for
-            show my <strong className="text-green-500">portfolio</strong> in a
-            different way. You can test it{" "}
+            <strong className="text-green-500">
+              interactive terminal emulator
+            </strong>{" "}
+            for show my <strong className="text-green-500">portfolio</strong> in
+            a different way. You can test it{" "}
             <strong className="text-green-500">writing the commands</strong>{" "}
             below:
           </span>

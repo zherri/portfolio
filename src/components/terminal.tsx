@@ -1,23 +1,20 @@
 "use client";
 
 import { JSX, useEffect, useRef, useState } from "react";
-import { Shell } from "@/core/shell";
+import { ROOT_DIR, Shell } from "@/core/shell";
 
 enum Keys {
   Enter = "Enter",
   Backspace = "Backspace",
-  Ctrl = "Ctrl",
 }
 
 export function Terminal() {
-  const shell = new Shell();
-
   const [history, setHistory] = useState<JSX.Element[]>([]);
-  const [cmd, setCmd] = useState<string>("");
-  const [cwd, setCwd] = useState<string>("myportfolio");
+  const [input, setInput] = useState<string>("");
+  const [cwd, setCwd] = useState<string>(ROOT_DIR);
   const scrollRef = useRef<HTMLDivElement>(null);
-
-  const acceptCmds = ["cd", "ls", "cat"];
+  const inputRef = useRef<HTMLElement>(null);
+  const cursorRef = useRef<HTMLElement>(null);
 
   const scrollToBottom = () => {
     if (scrollRef.current) {
@@ -25,49 +22,91 @@ export function Terminal() {
     }
   };
 
-  useEffect(() => {
-    const takeKey = (event: KeyboardEvent) => {
-      const args = cmd.includes(" ") ? cmd.split(" ") : [cmd];
-      var print = "";
+  const getKey = (event: KeyboardEvent) => {
+    const args = input.trim().split(" ");
+    const acceptedCmd = Shell.isValidCmd(args[0]);
+    var print = "";
 
-      if (event.key === Keys.Enter) {
-        const newEntry = (
-          <div key={Date.now()}>
-            <div className="mb-1">
-              <strong className="text-green-500">
-                [zherri@archlinux {cwd}]$&nbsp;
-              </strong>
-              <span>
-                <strong>{cmd}</strong>
-              </span>
-            </div>
-            <span>
-              {acceptCmds.includes(args[0])
-                ? print
-                : "invalid command: " + args[0]}
-            </span>
+    if (event.ctrlKey && event.key.toLowerCase() === "l") {
+      event.preventDefault();
+      setHistory([]);
+      setInput("");
+      return;
+    }
+
+    if (event.key === Keys.Enter) {
+      switch (args[0]) {
+        case "cd":
+          if (args[2]) {
+            print = "cd: too many arguments";
+            break;
+          }
+          print = Shell.cd(cwd, args[1] ?? null, setCwd);
+          break;
+        case "ls":
+          if (args[2]) {
+            print = "ls: too many arguments";
+            break;
+          }
+          print = Shell.ls(cwd, args[1] ?? null);
+          break;
+        case "clear":
+          if (args[2]) {
+            print = "clear: too many arguments";
+            break;
+          }
+          setHistory([]);
+          setInput("");
+          return;
+      }
+
+      const newEntry = (
+        <div key={Date.now()}>
+          <div className="mb-1">
+            <strong className="text-green-500">
+              [zherri@archlinux {cwd}]$&nbsp;
+            </strong>
+            <strong className={acceptedCmd ? "text-green-500" : "text-red-600"}>
+              {input}
+            </strong>
           </div>
-        );
+          <span>{acceptedCmd ? print : "invalid command: " + args[0]}</span>
+        </div>
+      );
 
-        setHistory((prev) => [...prev, newEntry]);
-        setCmd("");
-        return;
-      }
+      setHistory((prev) => [...prev, newEntry]);
+      setInput("");
+      return;
+    }
 
-      if (event.key === Keys.Backspace) {
-        setCmd((prev) => prev.slice(0, -1));
-        return;
-      }
+    if (event.key === Keys.Backspace) {
+      setInput((prev) => prev.slice(0, -1));
+      return;
+    }
 
-      if (event.key.length === 1) {
-        event.preventDefault();
-        setCmd((prev) => prev + event.key);
-      }
-    };
+    if (event.key.length === 1) {
+      event.preventDefault();
+      setInput((prev) => prev + event.key);
+    }
+  };
 
-    window.addEventListener("keydown", takeKey);
-    return () => window.removeEventListener("keydown", takeKey);
-  }, [cmd]);
+  useEffect(() => {
+    if (Shell.isValidCmd(input.split(" ")[0])) {
+      inputRef.current?.classList.remove("text-red-600");
+      inputRef.current?.classList.add("text-green-500");
+    } else {
+      inputRef.current?.classList.remove("text-green-500");
+      inputRef.current?.classList.add("text-red-600");
+    }
+
+    cursorRef.current?.classList.remove("blink-cursor");
+    setInterval(() => {
+      cursorRef.current?.classList.add("blink-cursor");
+    }, 100);
+
+    window.addEventListener("keydown", getKey);
+    return () => window.removeEventListener("keydown", getKey);
+  }, [input]);
 
   useEffect(() => {
     scrollToBottom();
@@ -85,8 +124,10 @@ export function Terminal() {
             [zherri@archlinux {cwd}]$&nbsp;
           </strong>
           <span>
-            <strong>{cmd}</strong>
-            <strong className="blink-cursor">│</strong>
+            <strong ref={inputRef}>{input}</strong>
+            <strong ref={cursorRef} className="blink-cursor">
+              █
+            </strong>
           </span>
         </div>
       </div>
