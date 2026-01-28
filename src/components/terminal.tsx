@@ -12,6 +12,7 @@ export function Terminal() {
   const [history, setHistory] = useState<JSX.Element[]>([]);
   const [input, setInput] = useState<string>("");
   const [cwd, setCwd] = useState<string>(ROOT_DIR);
+  const shell = useRef<Shell>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLElement>(null);
   const cursorRef = useRef<HTMLElement>(null);
@@ -22,6 +23,11 @@ export function Terminal() {
     }
   };
 
+  const clear = () => {
+    setHistory([]);
+    setInput("");
+  };
+
   const getKey = (event: KeyboardEvent) => {
     const args = input.trim().split(" ");
     const acceptedCmd = Shell.isValidCmd(args[0]);
@@ -29,35 +35,19 @@ export function Terminal() {
 
     if (event.ctrlKey && event.key.toLowerCase() === "l") {
       event.preventDefault();
-      setHistory([]);
-      setInput("");
+      clear();
       return;
     }
 
     if (event.key === Keys.Enter) {
-      switch (args[0]) {
-        case "cd":
-          if (args[2]) {
-            print = "cd: too many arguments";
-            break;
-          }
-          print = Shell.cd(cwd, args[1] ?? null, setCwd);
-          break;
-        case "ls":
-          if (args[2]) {
-            print = "ls: too many arguments";
-            break;
-          }
-          print = Shell.ls(cwd, args[1] ?? null);
-          break;
-        case "clear":
-          if (args[2]) {
-            print = "clear: too many arguments";
-            break;
-          }
-          setHistory([]);
-          setInput("");
+      if (args[0] === "clear") {
+        if (!(1 in args)) {
+          clear();
           return;
+        }
+        print = "clear: too many arguments";
+      } else {
+        if (shell.current) print = shell.current.interpret(args, cwd, setCwd);
       }
 
       const newEntry = (
@@ -70,7 +60,11 @@ export function Terminal() {
               {input}
             </strong>
           </div>
-          <span>{acceptedCmd ? print : "invalid command: " + args[0]}</span>
+          <span>
+            {acceptedCmd || args[0] === ""
+              ? print
+              : "invalid command: " + args[0]}
+          </span>
         </div>
       );
 

@@ -51,18 +51,24 @@ const FILES: Node[] = [
 ];
 
 export class FileSystem {
-  static findNode(name: string): Node | undefined {
-    return FILES.find((node) => node.name === name);
+  private files: Node[];
+
+  constructor(files: Node[]) {
+    this.files = files;
   }
 
-  static findNodeById(id: string): Node | undefined {
+  findNode(name: string): Node | undefined {
+    return this.files.find((node) => node.name === name);
+  }
+
+  findNodeById(id: string): Node | undefined {
     return FILES.find((node) => node.id === id);
   }
 
-  static getChildren(node: Node): string {
+  getChildren(node: Node): string {
     var files: string[] = [];
     node.children?.forEach((child) => {
-      const childName = FileSystem.findNodeById(child)?.name;
+      const childName = this.findNodeById(child)?.name;
       if (childName != undefined) {
         files.push(childName);
       }

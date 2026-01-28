@@ -1,20 +1,52 @@
-import { FileSystem, NodeType } from "@/core/filesystem";
+import { FileSystem, Node, NodeType } from "@/core/filesystem";
 
 export const ROOT_DIR = "myportfolio";
 
 export class Shell {
   private static VALID_CMDS: string[] = ["clear", "cd", "ls", "cat"];
+  private fileSystem: FileSystem;
+
+  constructor(files: Node[]) {
+    this.fileSystem = new FileSystem(files);
+  }
 
   static isValidCmd(cmd: string): boolean {
     return this.VALID_CMDS.includes(cmd);
   }
 
-  static cd(
+  interpret(
+    args: string[],
+    cwd: string,
+    setCwd: (cwd: string) => void,
+  ): string {
+    var print = "";
+
+    switch (args[0]) {
+      case "cd":
+        if (2 in args) {
+          print = "cd: too many arguments";
+          break;
+        }
+        print = this.cd(cwd, args[1] ?? null, setCwd);
+        break;
+      case "ls":
+        if (2 in args) {
+          print = "ls: too many arguments";
+          break;
+        }
+        print = this.ls(cwd, args[1] ?? null);
+        break;
+    }
+
+    return print;
+  }
+
+  private cd(
     cwd: string,
     path: string | null,
     setCwd: (cwd: string) => void,
   ): string {
-    var node = FileSystem.findNode(cwd);
+    var node = this.fileSystem.findNode(cwd);
 
     if (path == null && node != undefined) {
       setCwd(ROOT_DIR);
@@ -26,9 +58,9 @@ export class Shell {
       pathSplit.forEach((fileName) => {
         if (fileName === "..") {
           if (node?.parent == null) return;
-          node = FileSystem.findNodeById(node?.parent);
+          node = this.fileSystem.findNodeById(node?.parent);
         } else {
-          node = FileSystem.findNode(fileName);
+          node = this.fileSystem.findNode(fileName);
         }
       });
       if (node === undefined) {
@@ -44,11 +76,11 @@ export class Shell {
     return "";
   }
 
-  static ls(cwd: string, path: string | null): string {
-    var node = FileSystem.findNode(cwd);
+  private ls(cwd: string, path: string | null): string {
+    var node = this.fileSystem.findNode(cwd);
 
     if (path == null && node != undefined) {
-      return FileSystem.getChildren(node);
+      return this.fileSystem.getChildren(node);
     }
 
     if (path != null) {
@@ -57,14 +89,14 @@ export class Shell {
       pathSplit.forEach((fileName) => {
         if (fileName === "..") {
           if (node?.parent == null) return;
-          node = FileSystem.findNodeById(node?.parent);
+          node = this.fileSystem.findNodeById(node?.parent);
         } else {
-          node = FileSystem.findNode(fileName);
+          node = this.fileSystem.findNode(fileName);
         }
       });
       if (node != undefined) {
         if (node.type === NodeType.Folder) {
-          return FileSystem.getChildren(node);
+          return this.fileSystem.getChildren(node);
         }
         return path;
       }
@@ -73,5 +105,5 @@ export class Shell {
     return '"' + path + '": No such file or directory';
   }
 
-  static cat(arg: string): string {}
+  private cat(arg: string): string {}
 }

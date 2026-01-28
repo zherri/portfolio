@@ -2,8 +2,8 @@
 
 import { Terminal } from "@/components/terminal";
 import IconTypografy from "@/components/icon_typografy";
-import { FaInfoCircle, FaAngleUp } from "react-icons/fa";
-import { useState, useEffect, useRef } from "react";
+import { FaAngleUp, FaInfoCircle } from "react-icons/fa";
+import { useEffect, useRef, useState } from "react";
 
 export default function Home() {
   const [showHelp, setShowHelp] = useState<boolean>(true);
@@ -27,7 +27,7 @@ export default function Home() {
     <div className="flex flex-col items-center w-full h-full">
       <Terminal />
       <div
-        className={`absolute bottom-0 ${showHelp ? "opacity-0" : "opacity-100"} transition-transform animate-bounce transform 
+        className={`absolute bottom-0 ${showHelp ? "opacity-0" : "opacity-100"} transition-transform animate-bounce transform
                     flex flex-col items-center justify-center z-50`}
       >
         <FaAngleUp size={42} color="green" />
@@ -52,6 +52,14 @@ export default function Home() {
             <strong className="text-green-500">writing the commands</strong>{" "}
             below:
           </span>
+          <br />
+          <span>
+            - <strong className="text-green-500">cd</strong> [
+            <strong className="text-green-500">DIR</strong>]: Access a given
+            directory (You can type "cd .." to go one folder higher in the files
+            hierarchy).
+          </span>
+
           <br />
           <span>
             - <strong className="text-green-500">ls</strong>: Show directories
