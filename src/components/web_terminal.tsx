@@ -14,9 +14,9 @@ export default function WebTerminal() {
 
     const term = new Terminal({
       cursorBlink: true,
-      fontFamily: "JetBrainsMono Nerd Font Mono, monospace",
-      fontSize: 18,
-      fontWeight: "bold",
+      fontFamily: "VT323, monospace",
+      fontSize: 28,
+      lineHeight: 1,
       theme: {
         black: "#000000",
         red: "#FF0000",
@@ -53,7 +53,7 @@ export default function WebTerminal() {
   }, []);
 
   return (
-    <div className="p-4 bg-black w-full h-full overflow-hidden">
+    <div className={`p-4 bg-black w-full h-full overflow-hidden tracking-tighter whitespace-pre-wrap oldstyle-nums`}>
       <div ref={terminalRef} className="h-full w-full" />
     </div>
   );

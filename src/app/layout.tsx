@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { jetBrainsMono } from "@/theme/style_guide";
+import { vt323 } from "@/theme/style_guide";
 
 export const metadata: Metadata = {
   title: "Lucas Monteiro - Portfolio",
@@ -14,7 +14,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full">
       <body
-        className={`${jetBrainsMono.className} font-sans h-full`}
+        className={`${vt323.className} font-sans h-full`}
         suppressHydrationWarning
       >
         {children}

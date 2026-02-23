@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { FaAngleUp, FaInfoCircle } from "react-icons/fa";
 import IconTypografy from "@/components/icon_typografy";
 import WebTerminal from "@/components/web_terminal";
+import { jetBrainsMono } from "@/theme/style_guide";
 
 export default function Home() {
   const [showHelp, setShowHelp] = useState<boolean>(true);
@@ -39,7 +40,7 @@ export default function Home() {
         }}
         onMouseLeave={() => startTimer()}
         className={`absolute w-[90%] p-4 border border-[#00FF00] shadow-lg shadow-green-400/50 bg-black rounded-2xl
-                    ${showHelp ? "opacity-100 bottom-8" : "opacity-0 bottom-0"} transition-all duration-200`}
+                    ${showHelp ? "opacity-100 bottom-8" : "opacity-0 bottom-0"} transition-all duration-200  ${jetBrainsMono.className} font-sans`}
       >
         <IconTypografy icon={FaInfoCircle} iconColor="green">
           <span>

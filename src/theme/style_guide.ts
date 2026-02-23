@@ -9,3 +9,8 @@ export const jetBrainsMonoBold = localFont({
   src: "../assets/fonts/JetBrainsMonoNerdFont-Bold.ttf",
   variable: "--jet-brains-mono-bold",
 });
+
+export const vt323 = localFont({
+  src: "../assets/fonts/VT323-Regular.ttf",
+  variable: "--vt323",
+});
