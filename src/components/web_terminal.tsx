@@ -3,12 +3,11 @@
 import { useEffect, useRef } from "react";
 import { Terminal } from "@xterm/xterm";
 import { FitAddon } from "@xterm/addon-fit";
-import { WebContainer } from "@webcontainer/api";
+import { initWebContainer } from "@/lib/webcontainer";
 import "@xterm/xterm/css/xterm.css";
 
 export default function WebTerminal() {
   const terminalRef = useRef<HTMLDivElement>(null);
-  const webcontainerInstance = useRef<WebContainer | null>(null);
 
   useEffect(() => {
     if (!terminalRef.current) return;
@@ -35,7 +34,6 @@ export default function WebTerminal() {
         brightCyan: "#00FF00",
         brightWhite: "#00FF00",
         brightMagenta: "#00FF00",
-        
         background: "#000000",
         foreground: "#00FF00",
         cursor: "#00FF00",
@@ -47,51 +45,7 @@ export default function WebTerminal() {
     term.open(terminalRef.current);
     fitAddon.fit();
 
-    async function initWebContainer() {
-      const instance = await WebContainer.boot();
-      webcontainerInstance.current = instance;
-
-      await instance.mount({
-        myportfolio: {
-          directory: {
-            "hello.txt": {
-              file: { contents: "Olá, mundo!" },
-            },
-          },
-        },
-      });
-
-      const shellProcess = await instance.spawn("jsh", {
-        terminal: {
-          cols: term.cols,
-          rows: term.rows,
-        },
-        cwd: "myportfolio",
-      });
-
-      const input = shellProcess.input.getWriter();
-      term.onData((data) => {
-        input.write(data);
-      });
-
-      shellProcess.output.pipeTo(
-        new WritableStream({
-          write(data) {
-            term.write(data);
-          },
-        }),
-      );
-
-      window.addEventListener("resize", () => {
-        fitAddon.fit();
-        shellProcess.resize({
-          cols: term.cols,
-          rows: term.rows,
-        });
-      });
-    }
-
-    initWebContainer();
+    initWebContainer(term, fitAddon);
 
     return () => {
       term.dispose();
