@@ -17,26 +17,28 @@ export default function WebTerminal() {
       fontFamily: "VT323, monospace",
       fontSize: 28,
       lineHeight: 1,
+      allowTransparency: true,
       theme: {
-        black: "#000000",
+        black: "#050505",
         red: "#FF0000",
-        green: "#00FF00",
+        green: "#33ff33",
         yellow: "#FFFF00",
-        blue: "#00FF00",
-        cyan: "#00FF00",
-        white: "#00FF00",
-        magenta: "#00FF00",
-        brightBlack: "#000000",
+        blue: "#33ff33",
+        cyan: "#33ff33",
+        white: "#33ff33",
+        magenta: "#33ff33",
+        brightBlack: "#050505",
         brightRed: "#FF0000",
-        brightGreen: "#00FF00",
+        brightGreen: "#33ff33",
         brightYellow: "#FFFF00",
-        brightBlue: "#00FF00",
-        brightCyan: "#00FF00",
-        brightWhite: "#00FF00",
-        brightMagenta: "#00FF00",
-        background: "#000000",
-        foreground: "#00FF00",
-        cursor: "#00FF00",
+        brightBlue: "#33ff33",
+        brightCyan: "#33ff33",
+        brightWhite: "#33ff33",
+        brightMagenta: "#33ff33",
+        background: "#050505",
+        foreground: "#33ff33",
+        cursor: "#33ff33",
+        selectionBackground: "rgba(51, 255, 51, 0.3)",
       },
     });
 
@@ -47,14 +49,19 @@ export default function WebTerminal() {
 
     initWebContainer(term, fitAddon);
 
-    return () => {
-      term.dispose();
-    };
+    return () => term.dispose();
   }, []);
 
   return (
-    <div className={`p-4 bg-black w-full h-full overflow-hidden tracking-tighter whitespace-pre-wrap oldstyle-nums`}>
-      <div ref={terminalRef} className="h-full w-full" />
+    <div className="bg-black w-full h-full flex items-center justify-center p-4">
+      <div className={`crt-overlay w-full h-full rounded-lg shadow-2xl overflow-hidden tracking-tighter
+                      whitespace-pre-wrap oldstyle-nums`}>
+        <div
+          ref={terminalRef}
+          className="h-full w-full pl-2 bg-[#050505]"
+          style={{ filter: 'contrast(1.2) brightness(1.1)' }}
+        />
+      </div>
     </div>
   );
 }

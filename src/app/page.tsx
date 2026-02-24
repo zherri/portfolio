@@ -39,8 +39,8 @@ export default function Home() {
           setShowHelp(true);
         }}
         onMouseLeave={() => startTimer()}
-        className={`absolute w-[90%] p-4 border border-[#00FF00] shadow-lg shadow-green-400/50 bg-black rounded-2xl
-                    ${showHelp ? "opacity-100 bottom-8" : "opacity-0 bottom-0"} transition-all duration-200  ${jetBrainsMono.className} font-sans`}
+        className={`absolute w-[90%] p-4 border border-[#00FF00] rounded-2xl transition-all duration-200
+                    ${showHelp ? "opacity-100 bottom-8" : "opacity-0 bottom-0"} ${jetBrainsMono.className} font-sans`}
       >
         <IconTypografy icon={FaInfoCircle} iconColor="green">
           <span>
